@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import './Home.css'
 
 export default function Home() {
     const [posts, setPosts] = useState([]);
@@ -13,7 +14,7 @@ export default function Home() {
             .catch((err) => {
                 console.error("로그 실페", err)
             });
-    })
+    }, [])
 
     return (
         <div>
@@ -24,7 +25,7 @@ export default function Home() {
 
             <h2>게시물 목록</h2>
             {posts.map((post) => (
-                <div key={post.id}>
+                <div key={post.id} className="postlist">
                     <Link to={`posts/${post.id}`}>
                         <h3>{post.title}</h3>
                     </Link>
