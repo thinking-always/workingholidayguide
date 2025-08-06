@@ -1,6 +1,7 @@
-import axios from "axios";
-import { useEffect, useState } from "react"
+
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { api } from "../utils/axios";
 
 
 export default function PostEdit() {
@@ -11,8 +12,9 @@ export default function PostEdit() {
     const [content, setContent] = useState("");
 
 
+
     useEffect(() => {
-        axios.get(`http://localhost:8000/api/posts/${id}`)
+        api.get(`/posts/${id}`)
             .then((res) => {
                 setTitle(res.data.title)
                 setContent(res.data.content);
@@ -22,21 +24,18 @@ export default function PostEdit() {
                 alert("글을 찾을수 없습니다.");
                 navigate("/");
             });
-    }, [id]);
+    }, [id, navigate]);
 
     const handleEdit = async (e) => {
         e.preventDefault();
-        const access = localStorage.getItem("access")
+        
 
         try {
-            await axios.patch(`http://localhost:8000/api/posts/${id}/`, {
+            await api.patch(`/posts/${id}/`, {
                 title,
                 content,
-            }, {
-                headers: {
-                    Authorization: `Bearer ${access}`
-                }
-            });
+            }
+            );
             alert("수정 성공!");
             navigate(`/posts/${id}`);
         } catch (err) {
@@ -46,7 +45,7 @@ export default function PostEdit() {
         }
     };
 
-    const handleCancle = () => {
+    const handleCancel = () => {
         navigate(`/posts/${id}`);
     };
 
@@ -69,7 +68,7 @@ export default function PostEdit() {
             <br />
 
             <button onClick={handleEdit}>수정</button>
-            <button onClick={handleCancle}>취소</button>
+            <button onClick={handleCancel}>취소</button>
         </div>
     )
 }

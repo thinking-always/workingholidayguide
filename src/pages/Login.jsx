@@ -5,10 +5,12 @@ import { useNavigate } from "react-router-dom"
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [loading, setLoading] = useState("");
     const navigate = useNavigate();
 
     const handleLogin = async (e)  => {
         e.preventDefault();
+        setLoading(true);
         try{
             const res = await axios.post("http://localhost:8000/api/auth/login/", 
                 {username, password});
@@ -17,10 +19,12 @@ export default function Login() {
             console.log('access', res.data.access);
             console.log('refresh', res.data.refresh);
             alert("로그인 성공!");
-            navigate('/')
+            navigate("/");
         } catch(err) {
-            alert("로그인 실패:" + (err.response?.data?.detail || "오류"));
-        }   
+            alert("로그인 실패:" + (err.response?.data?.detail || err.message ||"오류"));
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
