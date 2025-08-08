@@ -1,26 +1,24 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../utils/axios"
 
 export default function Newpost() {
-    const [post, setPost] = useState("");
+    
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const navigate = useNavigate();
+    
 
     const handlepost = async (e) => {
         e.preventDefault();
 
-        const access = localStorage.getItem("access")
-        if(!access) {
-            alert("로그인 필요")
+        if ( !title.trim() || !content.trim()){
+            alert("제목과 내용을 모두 입력하세요.");
             return;
         }
 
         try{
-            const res = await axios.post("http://localhost:8000/api/posts/",{title, content},
-                { headers: {Authorization: `Bearer ${access}`} }
-             );
+            await api.post("/posts/",{title, content});
             alert("등록 성공!")
             navigate('/')
         } catch(err) {
@@ -40,7 +38,7 @@ export default function Newpost() {
                 onChange={(e) => setTitle(e.target.value)}
                 />
             
-                <input
+                <textarea
                 type="text"
                 placeholder="content"
                 value={content}

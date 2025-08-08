@@ -1,18 +1,20 @@
 import { useState } from "react"
 import axios from 'axios';
 import { useNavigate } from "react-router-dom"
+import { api } from "../utils/axios"
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [loading, setLoading] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
 
     const handleLogin = async (e)  => {
         e.preventDefault();
         setLoading(true);
         try{
-            const res = await axios.post("http://localhost:8000/api/auth/login/", 
+            const res = await api.post("/auth/login/", 
                 {username, password});
             localStorage.setItem("access", res.data.access);
             localStorage.setItem("refresh", res.data.refresh);
@@ -29,7 +31,7 @@ export default function Login() {
 
     return (
         <div>
-            <form onSubmit={handleLogin}>
+            <form onSubmit={handleLogin} style={{ opacity: loading ? 0.5 : 1 }}>
                 <h2>로그인</h2>
                 <input
                 type="text"
@@ -43,7 +45,9 @@ export default function Login() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 />
-                <button type="submit">로그인</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? "로딩 중..." : "로그인" } 
+                </button>
             </form>
         </div>
     )
