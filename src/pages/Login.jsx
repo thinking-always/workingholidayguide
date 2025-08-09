@@ -22,6 +22,7 @@ export default function Login() {
             console.log('refresh', res.data.refresh);
             alert("로그인 성공!");
             navigate("/");
+            window.location.reload();
         } catch(err) {
             alert("로그인 실패:" + (err.response?.data?.detail || err.message ||"오류"));
         } finally {

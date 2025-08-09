@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { api } from "../utils/axios";  // 설정한 axios를 import
 import { AuthContext } from "../context/AuthContext";
+import './PostDetail.css';  
 
 export default function PostDetail() {
     const { id } = useParams();
@@ -50,7 +51,6 @@ export default function PostDetail() {
                 content: commentContent
             });
             alert("댓글을 작성하였습니다.");
-            //setComments([res.data, ...comments]);//
             setComments([res.data, ...comments]);
             setCommentContent("");
         } catch (err) {
@@ -62,31 +62,35 @@ export default function PostDetail() {
     if (!post) return <div>불러오는 중 ...</div>;
 
     return (
-        <div>
-            <h2>{post.title}</h2>
-            <p>{post.content}</p>
+        <div className="post-detail-container">
+            <div className="post-header">
+                <h2>{post.title}</h2>
+                <p className="post-author">작성자: {post.author_username}</p>
+                <p className="post-content">{post.content}</p>
+            </div>
+
             {user?.username === post.author_username && (
-                <>
-                    <button onClick={handleEdit}>수정</button>
-                    <button onClick={handleDelete}>삭제</button>
-                </>
+                <div className="post-actions">
+                    <button className="action-btn" onClick={handleEdit}>수정</button>
+                    <button className="action-btn delete-btn" onClick={handleDelete}>삭제</button>
+                </div>
             )}
 
-
             {accessToken && (
-                <form onSubmit={handleCommentSubmit}>
+                <form className="comment-form" onSubmit={handleCommentSubmit}>
                     <textarea
                         value={commentContent}
                         onChange={(e) => setCommentContent(e.target.value)}
                         placeholder="댓글을 입력하세요"
+                        className="comment-input"
                     />
-                    <button type="submit">댓글 작성</button>
+                    <button type="submit" className="submit-btn">댓글 작성</button>
                 </form>
             )}
 
-            <ul>
+            <ul className="comments-list">
                 {comments.map((c) => (
-                    <li key={c.id}>
+                    <li key={c.id} className="comment-item">
                         <strong>{c.author_username}</strong>: {c.content}
                     </li>
                 ))}

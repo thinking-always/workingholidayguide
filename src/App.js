@@ -5,11 +5,14 @@ import Login from './pages/Login';
 import Newpost from './pages/Newpost'
 import PostDetail from './pages/PostDetail'
 import PostEdit from './pages/PostEdit'
+import Headers from './components/Headers';
 import { AuthProvider } from './context/AuthContext';
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+      <Headers />
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
