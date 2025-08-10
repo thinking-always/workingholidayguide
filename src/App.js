@@ -6,7 +6,7 @@ import Newpost from './pages/Newpost'
 import PostDetail from './pages/PostDetail'
 import PostEdit from './pages/PostEdit'
 import Headers from './components/Headers';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   return (

@@ -1,0 +1,180 @@
+/* 컨테이너 */
+.post-edit-container {
+  max-width: 860px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+.post-edit-title {
+  margin: 0 0 1.2rem 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #222;
+}
+
+/* 사용 가이드 */
+.editor-guide {
+  background: #f9f9fb;
+  border: 1px solid #e6e8ef;
+  border-radius: 10px;
+  padding: 0.8rem 1rem;
+  font-size: 0.92rem;
+  color: #333;
+  margin-bottom: 0.8rem;
+}
+.editor-guide p {
+  margin: 0 0 0.4rem 0;
+  font-weight: 600;
+}
+.editor-guide ul {
+  margin: 0;
+  padding-left: 1.2rem;
+}
+.editor-guide li {
+  margin: 0.2rem 0;
+}
+
+.post-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.post-edit-input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: 1px solid #dcdcdc;
+  border-radius: 10px;
+  font-size: 1rem;
+  background-color: #fafafa;
+  transition: border-color 0.2s ease;
+  box-sizing: border-box;
+}
+
+.post-edit-input:focus {
+  outline: none;
+  border-color: #4f7cff;
+  box-shadow: 0 0 0 3px rgba(79,124,255,0.15);
+}
+
+/* 툴바 + 에디터 래퍼 */
+.ql-custom-toolbar {
+  border: 1px solid #dcdcdc;
+  border-radius: 10px 10px 0 0;
+  background: #f8f9fb;
+  padding: 0.4rem;
+  box-sizing: border-box;
+}
+
+.post-edit-editor .ql-container {
+  border: 1px solid #dcdcdc;
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  min-height: 260px;
+  background: #fff;
+}
+
+.post-edit-editor .ql-editor {
+  min-height: 240px;
+  padding: 1rem 1rem 2rem;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+/* 기본 버튼 hover */
+.ql-toolbar button:hover,
+.ql-toolbar button:focus {
+  color: #4f7cff !important;
+}
+
+/* select 보정 */
+.ql-toolbar select {
+  border-radius: 8px;
+  border: 1px solid #e1e4ea;
+}
+
+/* 폰트 매핑 (Font.whitelist) */
+.ql-font-arial { font-family: Arial, Helvetica, sans-serif; }
+.ql-font-georgia { font-family: Georgia, "Times New Roman", serif; }
+.ql-font-tahoma { font-family: Tahoma, Geneva, sans-serif; }
+.ql-font-courier { font-family: "Courier New", Courier, monospace; }
+
+/* 버튼 영역 */
+.post-edit-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.post-edit-submit-btn,
+.post-edit-cancel-btn {
+  padding: 0.75rem 1.2rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.post-edit-submit-btn {
+  background: #4f7cff;
+  color: #fff;
+}
+.post-edit-submit-btn:hover { background: #3e68f5; }
+.post-edit-submit-btn:active { transform: translateY(1px); }
+
+.post-edit-cancel-btn {
+  background: #e9ecef;
+  color: #333;
+}
+.post-edit-cancel-btn:hover { background: #dde2e6; }
+.post-edit-cancel-btn:active { transform: translateY(1px); }
+
+/* ✅ 커스텀 툴팁 */
+.ql-custom-toolbar [data-tooltip] {
+  position: relative;
+}
+.ql-custom-toolbar [data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -36px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  background: #1f2937;
+  color: #fff;
+  padding: 6px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  pointer-events: none;
+  z-index: 1000;
+}
+.ql-custom-toolbar [data-tooltip]:hover::before {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1f2937;
+}
+
+/* 반응형 */
+@media (max-width: 640px) {
+  .post-edit-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+  .post-edit-editor .ql-editor {
+    padding: 0.75rem;
+  }
+  .ql-custom-toolbar [data-tooltip]:hover::after {
+    bottom: -44px;
+  }
+}
