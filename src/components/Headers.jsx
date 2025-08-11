@@ -31,39 +31,31 @@ export default function Headers() {
     <header className="header">
       {/* 네비게이션 */}
       <nav className="nav-links">
+      
         <Link to="/">홈</Link>
-        <Link to="/posts">워홀 기본정보</Link>
+        <Link to="/basic">워홀 기본정보</Link>
 
         <div>
-          <Link to="/about">일자리 & 숙소</Link>
-          <div>
+          <Link to="/jobs_housing">일자리 & 숙소</Link>
+          {/* <div>
             <Link to="/post/1">서브1</Link>
             <Link to="/post/1">서브2</Link>
-          </div>
+          </div> */}
         </div>
 
         <div>
-          <Link to="/about">생활 가이드</Link>
-          <div>
-            <Link to="/">서브1</Link>
-            <Link to="/post/1">서브2</Link>
-          </div>
+          <Link to="/guide">생활 가이드</Link>
+          
         </div>
 
         <div>
-          <Link to="/about">워홀 후기 & 여행</Link>
-          <div>
-            <Link to="/">서브1</Link>
-            <Link to="/post/1">서브2</Link>
-          </div>
+          <Link to="/travel">워홀 후기 & 여행</Link>
+          
         </div>
 
         <div>
-          <Link to="/about">Q&A & 추천</Link>
-          <div>
-            <Link to="/">서브1</Link>
-            <Link to="/post/1">서브2</Link>
-          </div>
+          <Link to="/qna">Q&A & 추천</Link>
+          
         </div>
       </nav>
 

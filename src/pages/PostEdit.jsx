@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+// src/pages/PostEdit.jsx
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
@@ -23,13 +24,15 @@ export default function PostEdit() {
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(""); // HTML
   const [loading, setLoading] = useState(true);
 
+  // 이미지 변환 진행표시 + 루프 가드
+  const [isConvertingImages, setIsConvertingImages] = useState(false);
+  const isTransformingRef = useRef(false);
+
   // ✅ 툴바 구성 (Heading 제거, size는 px 단위)
-  const modules = {
-    toolbar: { container: "#editor-toolbar-edit" },
-  };
+  const modules = { toolbar: { container: "#editor-toolbar-edit" } };
 
   // ✅ 허용 포맷
   const formats = [
@@ -41,11 +44,10 @@ export default function PostEdit() {
   ];
 
   useEffect(() => {
-    // 상세 불러오기 (트레일링 슬래시 일관)
     api.get(`/posts/${id}/`)
       .then((res) => {
         setTitle(res.data.title ?? "");
-        setContent(res.data.content ?? ""); // HTML 문자열
+        setContent(res.data.content ?? "");
       })
       .catch((err) => {
         console.error("불러오기 실패", err);
@@ -55,39 +57,104 @@ export default function PostEdit() {
       .finally(() => setLoading(false));
   }, [id, navigate]);
 
-  // ✅ 툴바 버튼/셀렉트에 툴팁(설명) 부여
+  // ✅ 툴바 버튼/셀렉트 툴팁
   useEffect(() => {
     const toolbar = document.getElementById("editor-toolbar-edit");
     if (!toolbar) return;
-
-    const setTip = (selector, label) => {
-      const el = toolbar.querySelector(selector);
+    const tip = (sel, label) => {
+      const el = toolbar.querySelector(sel);
       if (!el) return;
-      el.setAttribute("title", label);          // 브라우저 기본
-      el.setAttribute("aria-label", label);     // 접근성
-      el.setAttribute("data-tooltip", label);   // 커스텀 툴팁
+      el.setAttribute("title", label);
+      el.setAttribute("aria-label", label);
+      el.setAttribute("data-tooltip", label);
+    };
+    tip("select.ql-font", "폰트(Font): 본문 글꼴 변경");
+    tip("select.ql-size", "글자 크기(Size): px 단위");
+    tip("button.ql-bold", "굵게(Bold)");
+    tip("button.ql-italic", "기울임(Italic)");
+    tip("button.ql-underline", "밑줄(Underline)");
+    tip("button.ql-strike", "취소선(Strikethrough)");
+    tip("select.ql-color", "글자 색(Color)");
+    tip("select.ql-background", "배경 색(Highlight)");
+    tip("button.ql-list[value='ordered']", "번호 목록");
+    tip("button.ql-list[value='bullet']", "점 목록");
+    tip("select.ql-align", "정렬");
+    tip("button.ql-link", "링크");
+    tip("button.ql-image", "이미지");
+    tip("button.ql-code-block", "코드 블록");
+    tip("button.ql-clean", "서식 제거");
+  }, []);
+
+  // ========= ★ 핵심: data:image → 업로드 → URL(+data-public-id) 치환 =========
+  useEffect(() => {
+    if (isTransformingRef.current) return;
+    if (!content || !content.includes("data:image")) return;
+
+    const run = async () => {
+      isTransformingRef.current = true;
+      setIsConvertingImages(true);
+      try {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(content, "text/html");
+        const imgs = Array.from(doc.querySelectorAll("img[src^='data:image']"));
+        if (!imgs.length) return;
+
+        const apiOrigin = (() => {
+          try { return new URL(api.defaults.baseURL).origin; }
+          catch { return window.location.origin; }
+        })();
+
+        for (const img of imgs) {
+          const dataUrl = img.getAttribute("src");
+          try {
+            const file = dataURLtoFile(dataUrl, makeFileNameFromDataURL(dataUrl));
+            const form = new FormData();
+            form.append("image", file);
+
+            const res = await api.post("/uploads/images/", form, {
+              headers: { "Content-Type": "multipart/form-data" },
+            });
+
+            const { url: rawUrl, public_id } = res.data || {};
+            const finalUrl = rawUrl?.startsWith("/") ? (apiOrigin + rawUrl) : rawUrl;
+
+            if (finalUrl) {
+              img.setAttribute("src", finalUrl);
+              if (public_id) img.setAttribute("data-public-id", public_id);
+            }
+          } catch (e) {
+            console.error("이미지 업로드 실패:", e);
+          }
+        }
+
+        const newHtml = doc.body.innerHTML;
+        if (newHtml !== content) setContent(newHtml);
+      } finally {
+        setIsConvertingImages(false);
+        isTransformingRef.current = false;
+      }
     };
 
-    setTip("select.ql-font", "폰트(Font): 본문 글꼴 변경");
-    setTip("select.ql-size", "글자 크기(Size): px 단위");
+    run();
+  }, [content]);
+  // ========= ★ 끝 =========
 
-    setTip("button.ql-bold", "굵게(Bold)");
-    setTip("button.ql-italic", "기울임(Italic)");
-    setTip("button.ql-underline", "밑줄(Underline)");
-    setTip("button.ql-strike", "취소선(Strikethrough)");
-
-    setTip("select.ql-color", "글자 색(Color)");
-    setTip("select.ql-background", "배경 색(Highlight)");
-
-    setTip("button.ql-list[value='ordered']", "번호 목록");
-    setTip("button.ql-list[value='bullet']", "점 목록");
-    setTip("select.ql-align", "정렬");
-
-    setTip("button.ql-link", "링크");
-    setTip("button.ql-image", "이미지");
-    setTip("button.ql-code-block", "코드 블록");
-    setTip("button.ql-clean", "서식 제거");
-  }, []);
+  // helpers
+  function dataURLtoFile(dataUrl, filename = "image.png") {
+    const arr = dataUrl.split(",");
+    const mimeMatch = arr[0].match(/data:(.*?);base64/);
+    const mime = mimeMatch ? mimeMatch[1] : "image/png";
+    const bstr = atob(arr[1] || "");
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) u8arr[n] = bstr.charCodeAt(n);
+    return new File([u8arr], filename, { type: mime });
+  }
+  function makeFileNameFromDataURL(dataUrl) {
+    const mimeMatch = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64/);
+    const ext = mimeMatch ? mimeMatch[1].split("/")[1].replace("+xml", "") : "png";
+    return `paste-${Date.now()}.${ext}`;
+  }
 
   const handleEdit = async (e) => {
     e.preventDefault();
@@ -107,9 +174,7 @@ export default function PostEdit() {
 
   const handleCancel = () => navigate(`/posts/${id}`);
 
-  if (loading) {
-    return <div className="post-edit-container">불러오는 중…</div>;
-  }
+  if (loading) return <div className="post-edit-container">불러오는 중…</div>;
 
   return (
     <div className="post-edit-container">
@@ -124,7 +189,7 @@ export default function PostEdit() {
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        {/* ✅ 커스텀 툴바 (ID만 편집 화면용으로 구분) */}
+        {/* ✅ 커스텀 툴바 */}
         <div id="editor-toolbar-edit" className="ql-custom-toolbar">
           <span className="ql-formats">
             <select className="ql-font" defaultValue="">
@@ -175,7 +240,6 @@ export default function PostEdit() {
           </span>
         </div>
 
-        {/* ✅ 에디터 */}
         <ReactQuill
           value={content}
           onChange={setContent}
@@ -185,6 +249,12 @@ export default function PostEdit() {
           formats={formats}
           className="post-edit-editor"
         />
+
+        {isConvertingImages && (
+          <div style={{ fontSize: 12, color: "#666", marginTop: 6 }}>
+            이미지 업로드 중… (잠시만요)
+          </div>
+        )}
 
         <div className="post-edit-actions">
           <button type="submit" className="post-edit-submit-btn">수정</button>

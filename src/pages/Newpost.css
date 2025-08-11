@@ -168,6 +168,10 @@
   }
 }
 
+/* src/pages/PostDetail.css */
+.ql-editor img { max-width: 100%; height: auto; display: block; }
+
+
 /* px 사이즈 예시 */
 .ql-size-10px { font-size: 10px; }
 .ql-size-12px { font-size: 12px; }

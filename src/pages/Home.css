@@ -1,3 +1,6 @@
+/* src/pages/Home.css */
+
+/* 기본 레이아웃 (기존 유지) */
 .home-container {
   max-width: 900px;
   margin: 2rem auto;
@@ -5,13 +8,12 @@
   font-family: sans-serif;
 }
 
-/* 카테고리 탭 */
+/* 카테고리 탭(다른 페이지에서도 사용) */
 .category-tabs {
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
 }
-
 .category-tabs button {
   padding: 0.5rem 1rem;
   border: none;
@@ -19,7 +21,6 @@
   cursor: pointer;
   border-radius: 4px;
 }
-
 .category-tabs button.active {
   background: #007bff;
   color: white;
@@ -35,64 +36,146 @@
   text-decoration: none;
   border-radius: 4px;
 }
+.write-btn:hover { background: #218838; }
 
-.write-btn:hover {
-  background: #218838;
-}
-
-/* 게시판 테이블 */
+/* 테이블 기본(공용) */
 .post-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
 }
-
 .post-table th,
 .post-table td {
   border-bottom: 1px solid #ccc;
   padding: 0.6rem;
   text-align: center;
 }
-
-.post-table th {
-  background: #f8f8f8;
-}
-
+.post-table th { background: #f8f8f8; }
 .post-table td a {
   color: #333;
   text-decoration: none;
 }
+.post-table td a:hover { text-decoration: underline; }
 
-.post-table td a:hover {
-  text-decoration: underline;
-}
-
-/* 번호 칸 */
+/* 컬럼 폭 (기본 테이블용) */
 .post-table th:nth-child(1),
-.post-table td:nth-child(1) {
-    width: 8%;
-}
-
-/* 제목 칸 */
+.post-table td:nth-child(1) { width: 8%; }
 .post-table th:nth-child(2),
-.post-table td:nth-child(2) {
-    width: 55%;
-}
-
-/* 작성자 */
+.post-table td:nth-child(2) { width: 55%; }
 .post-table th:nth-child(3),
-.post-table td:nth-child(3) {
-    width: 15%;
-}
-
-/* 날짜 */
+.post-table td:nth-child(3) { width: 15%; }
 .post-table th:nth-child(4),
-.post-table td:nth-child(4) {
-    width: 15%;
+.post-table td:nth-child(4) { width: 15%; }
+.post-table th:nth-child(5),
+.post-table td:nth-child(5) { width: 7%; }
+
+/* ===== 홈 전용 섹션 ===== */
+
+/* 상단 줄 */
+.home-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.home-title { margin: 0; }
+
+/* 2x2 섹션 그리드 */
+.home-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-/* 조회수 */
-.post-table th:nth-child(5),
-.post-table td:nth-child(5) {
-    width: 7%;
+/* 섹션 카드 */
+.home-section {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+
+/* 섹션 헤더 */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+.section-header h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+.section-more {
+  font-size: 0.85rem;
+  color: #007bff;
+  text-decoration: none;
+}
+.section-more:hover { text-decoration: underline; }
+
+/* 섹션 내 테이블: 컴팩트 모드 + 비율 고정 */
+.post-table.post-table--compact {
+  table-layout: fixed;
+  font-size: 0.9rem;
+}
+.post-table.post-table--compact th,
+.post-table.post-table--compact td {
+  padding: 0.35rem 0.45rem;
+  vertical-align: middle;
+}
+.post-table.post-table--compact thead th:nth-child(1),
+.post-table.post-table--compact tbody td:nth-child(1) { width: 12%; text-align: center; }
+.post-table.post-table--compact thead th:nth-child(2),
+.post-table.post-table--compact tbody td:nth-child(2) { width: 48%; }
+.post-table.post-table--compact thead th:nth-child(3),
+.post-table.post-table--compact tbody td:nth-child(3) { width: 16%; }
+.post-table.post-table--compact thead th:nth-child(4),
+.post-table.post-table--compact tbody td:nth-child(4) { width: 24%; }
+
+/* 제목 말줄임 */
+.post-table.post-table--compact .ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .home-sections { grid-template-columns: 1fr; }
+  .post-table.post-table--compact { font-size: 0.85rem; }
+  .post-table.post-table--compact th,
+  .post-table.post-table--compact td { padding: 0.32rem 0.4rem; }
+}
+
+/* ----- 화면을 더 꽉 차게 보이도록 확대(오버라이드) ----- */
+.home-container { max-width: 1100px; }                /* 900 → 1100 */
+.home-sections { gap: 14px; }                          /* 12 → 14 */
+.home-section {
+  padding: 12px;                                       /* 10 → 12 */
+  min-height: 340px;                                   /* 5행 기준 꽉 차는 느낌 */
+}
+.section-header { margin-bottom: 8px; }                /* 6 → 8 */
+.section-header h3 { font-size: 1.08rem; }             /* 1.0 → 1.08 */
+.post-table.post-table--compact { font-size: 0.95rem; }/* 0.90 → 0.95 */
+.post-table.post-table--compact th,
+.post-table.post-table--compact td {
+  padding: 0.48rem 0.6rem;                             /* ↑ 행 높이 확보 */
+  line-height: 1.45;
+}
+/* 칼럼 비율 미세 조정: 제목 더 넓게 */
+.post-table.post-table--compact thead th:nth-child(1),
+.post-table.post-table--compact tbody td:nth-child(1) { width: 10%; }
+.post-table.post-table--compact thead th:nth-child(2),
+.post-table.post-table--compact tbody td:nth-child(2) { width: 50%; }
+.post-table.post-table--compact thead th:nth-child(3),
+.post-table.post-table--compact tbody td:nth-child(3) { width: 18%; }
+.post-table.post-table--compact thead th:nth-child(4),
+.post-table.post-table--compact tbody td:nth-child(4) { width: 22%; }
+
+@media (max-width: 768px) {
+  .post-table.post-table--compact { font-size: 0.9rem; }  /* 0.85 → 0.9 */
+  .post-table.post-table--compact th,
+  .post-table.post-table--compact td { padding: 0.42rem 0.5rem; }
 }
