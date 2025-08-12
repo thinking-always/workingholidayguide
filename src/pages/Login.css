@@ -1,0 +1,173 @@
+:root {
+  --auth-max-width: 480px;
+  --auth-radius: 12px;
+  --auth-shadow: 0 8px 24px rgba(0,0,0,.06);
+  --auth-border: #e6e8ef;
+  --auth-text: #222;
+  --auth-muted: #667085;
+  --auth-primary: #0d6efd;
+  --auth-primary-hover: #0b5ed7;
+  --auth-focus: 0 0 0 3px rgba(13,110,253,.18);
+  --auth-error-bg: #fff0f0;
+  --auth-error-border: #ffcfcf;
+  --auth-error-text: #b00020;
+  --auth-info-bg: #eef6ff;
+  --auth-info-border: #cfe2ff;
+  --auth-info-text: #0b5ed7;
+}
+
+/* ✅ 컨테이너 내부는 전부 border-box → padding/border 포함 폭 계산 (튀어나옴 방지) */
+.login-container, .login-container * {
+  box-sizing: border-box;
+}
+
+.login-container {
+  max-width: var(--auth-max-width);
+  margin: 64px auto;
+  padding: 24px;
+  background: #fff;
+  border: 1px solid var(--auth-border);
+  border-radius: var(--auth-radius);
+  box-shadow: var(--auth-shadow);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--auth-text);
+}
+
+.login-title {
+  margin: 0 0 16px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+.login-info,
+.login-error {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  line-height: 1.45;
+}
+.login-info {
+  background: var(--auth-info-bg);
+  border: 1px solid var(--auth-info-border);
+  color: var(--auth-info-text);
+}
+.login-error {
+  background: var(--auth-error-bg);
+  border: 1px solid var(--auth-error-border);
+  color: var(--auth-error-text);
+}
+
+/* ✅ 폼 레이아웃: 갭으로 간격 관리, 폭 100% 고정 */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+/* 라벨/입력 공통 스타일 */
+.login-form label {
+  display: block;
+  font-size: 14px;
+  color: var(--auth-muted);
+}
+
+.login-form input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 14px;
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease;
+  background: #fff;
+  color: var(--auth-text);
+}
+.login-form input:focus {
+  border-color: var(--auth-primary);
+  box-shadow: var(--auth-focus);
+}
+
+/* 비밀번호 토글 줄 */
+.pw-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pw-row input { flex: 1; }
+
+.pw-toggle {
+  padding: 10px 12px;
+  border: 1px solid #ced4da;
+  background: #f6f7f9;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  color: #334155;
+}
+.pw-toggle:hover { background: #eef1f5; }
+
+/* 버튼 */
+.login-submit {
+  width: 100%;
+  padding: 13px 14px;
+  background: var(--auth-primary);
+  color: #fff;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background .15s ease, transform .02s ease;
+}
+.login-submit:hover { background: var(--auth-primary-hover); }
+.login-submit:active { transform: translateY(1px); }
+.login-submit:disabled { opacity: .7; cursor: not-allowed; }
+
+.login-footer {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14px;
+  color: #475467;
+}
+.register-link {
+  color: var(--auth-primary);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 6px;
+}
+.register-link:hover { text-decoration: underline; }
+
+/* 반응형 */
+@media (max-width: 520px) {
+  .login-container { margin: 40px 16px; padding: 20px; }
+  .login-title { font-size: 22px; }
+}
+
+.login-helpers {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.helper-link {
+  display: inline-block;
+  text-align: center;
+  padding: 10px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #222;
+  background: #fff;
+}
+.helper-link:hover { background: #f6f7f9; }
+
+.helper-link.primary {
+  border-color: #0d6efd;
+  color: #0d6efd;
+}

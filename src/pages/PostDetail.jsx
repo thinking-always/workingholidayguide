@@ -6,6 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import { api } from "../utils/axios";
 import "./PostDetail.css";
 import { AuthContext } from "../contexts/AuthContext";
+import { ensureLoggedIn } from "../utils/auth";
 
 export default function PostDetail() {
   const { id } = useParams();
@@ -92,6 +93,8 @@ export default function PostDetail() {
   // 댓글 작성: POST /comments/  body: { post, content }
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+    if (!ensureLoggedIn(navigate, "댓글 작성은 로그인 후 이용 가능합니다.")) return;
+
     if (!newComment.trim()) return alert("댓글 내용을 입력하세요.");
     try {
       setIsSubmitting(true);

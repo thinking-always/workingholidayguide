@@ -6,6 +6,7 @@ import "react-quill/dist/quill.snow.css";
 import { api } from "../utils/axios";
 import "./Newpost.css";
 import { CATEGORIES, CATEGORY_SLUGS } from "../constants/categories";
+import { ensureLoggedIn } from "../utils/auth";
 
 const Font = Quill.import("formats/font");
 Font.whitelist = ["arial", "georgia", "tahoma", "courier"];
@@ -134,6 +135,8 @@ export default function NewPost() {
 
   const handlePost = async (e) => {
     e.preventDefault();
+    if (!ensureLoggedIn(navigate, "게시물 작성은 로그인 후 이용 가능합니다.")) return;
+
     if (!title.trim() || !content.trim()) {
       alert("제목과 내용을 모두 입력하세요.");
       return;

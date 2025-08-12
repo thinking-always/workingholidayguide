@@ -8,6 +8,13 @@ import PostEdit from './pages/PostEdit'
 import Headers from './components/Headers';
 import { AuthProvider } from './contexts/AuthContext';
 import CategoryList from "./pages/CategoryList";
+import Register from "./pages/Register";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import ForgotUsername from "./pages/ForgotUsername";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -17,6 +24,14 @@ function App() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/privacy" element={<Privacy />} />
+
+          <Route path="/forgot-username" element={<ForgotUsername />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/settings" element={<Settings />} />
 
           <Route path="/basic" element={<CategoryList slug="basic" />} />
           <Route path="/jobs_housing" element={<CategoryList slug="jobs_housing" />} />
@@ -28,6 +43,8 @@ function App() {
           <Route path="/new/:category" element={<Newpost />} />
           <Route path='/posts/:id' element={<PostDetail />} />
           <Route path='/posts/:id/edit' element={<PostEdit />} />
+
+
         </Routes>
       </BrowserRouter>
     </AuthProvider>
