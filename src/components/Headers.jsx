@@ -53,7 +53,7 @@ export default function Headers() {
     <header className="header">
       {/* 브랜드 */}
       <div className="brand">
-        <Link to="/">Creeps</Link>
+        <Link to="/">Working holiday guide</Link>
       </div>
 
       {/* 데스크톱 네비 */}
