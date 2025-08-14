@@ -178,9 +178,10 @@ export default function NewPost() {
         <input
           className="newpost-input"
           type="text"
-          placeholder="제목을 입력하세요"
+          placeholder="제목을 입력하세요(최대 50자)"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          maxLength={50}
         />
 
         <div id="editor-toolbar" className="ql-custom-toolbar">
