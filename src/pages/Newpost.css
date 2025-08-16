@@ -39,7 +39,7 @@
   box-shadow: 0 0 0 3px rgba(79,124,255,0.15);
 }
 
-/* 사용 가이드 박스 */
+/* 사용 가이드 박스 (필요 시 사용) */
 .editor-guide {
   background: #f9f9fb;
   border: 1px solid #e6e8ef;
@@ -61,25 +61,41 @@
   margin: 0.2rem 0;
 }
 
-/* 툴바 + 에디터 래퍼 */
+/* ===== 헤더 높이(네비 고정이면 실제 높이로 맞추기) ===== */
+:root {
+  --app-header-height: 56px; /* 필요 시 64px 등으로 조절 */
+}
+
+/* 제목 + 툴바 sticky 래퍼 */
+.newpost-sticky-header {
+  position: sticky;
+  top: var(--app-header-height);
+  z-index: 2000;
+  background: #fff;
+  padding-top: 4px;
+  padding-bottom: 6px;
+}
+
+/* 툴바 */
 .ql-custom-toolbar {
   border: 1px solid #dcdcdc;
-  border-radius: 10px 10px 0 0;
+  border-radius: 10px;
   background: #f8f9fb;
   padding: 0.4rem;
   box-sizing: border-box;
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
 }
 
+/* 에디터 */
 .newpost-editor .ql-container {
   border: 1px solid #dcdcdc;
-  border-top: none;
-  border-radius: 0 0 10px 10px;
-  min-height: 260px;
+  border-radius: 10px;
+  min-height: 420px;
   background: #fff;
 }
 
 .newpost-editor .ql-editor {
-  min-height: 240px;
+  min-height: 380px;
   padding: 1rem 1rem 2rem;
   font-size: 1rem;
   line-height: 1.65;
@@ -156,6 +172,8 @@
 
 /* 반응형 */
 @media (max-width: 640px) {
+  :root { --app-header-height: 48px; }
+
   .newpost-container {
     margin: 1rem;
     padding: 1rem;
@@ -164,15 +182,14 @@
     padding: 0.75rem;
   }
   .ql-custom-toolbar [data-tooltip]:hover::after {
-    bottom: -44px; /* 모바일에서 겹침 보정 */
+    bottom: -44px; /* 모바일 툴팁 보정 */
   }
 }
 
-/* src/pages/PostDetail.css */
+/* Quill 이미지 반응형 */
 .ql-editor img { max-width: 100%; height: auto; display: block; }
 
-
-/* px 사이즈 예시 */
+/* px 사이즈 매핑 */
 .ql-size-10px { font-size: 10px; }
 .ql-size-12px { font-size: 12px; }
 .ql-size-14px { font-size: 14px; }
@@ -184,4 +201,3 @@
 .ql-size-26px { font-size: 26px; }
 .ql-size-28px { font-size: 28px; }
 .ql-size-30px { font-size: 30px; }
-

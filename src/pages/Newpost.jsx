@@ -1,4 +1,3 @@
-// frontend/src/pages/Newpost.jsx
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
@@ -30,12 +29,18 @@ export default function NewPost() {
   const isTransformingRef = useRef(false);
 
   const modules = { toolbar: { container: "#editor-toolbar" } };
-  const formats = ["bold","italic","underline","strike","list","bullet","align","link","image","code-block","color","background","font","size"];
+  const formats = [
+    "bold","italic","underline","strike",
+    "list","bullet","align",
+    "link","image","code-block",
+    "color","background","font","size"
+  ];
 
   useEffect(() => {
     if (fixedCategory) setCategory(fixedCategory);
   }, [fixedCategory]);
 
+  // 툴바 접근성 라벨링
   useEffect(() => {
     const toolbar = document.getElementById("editor-toolbar");
     if (!toolbar) return;
@@ -175,64 +180,68 @@ export default function NewPost() {
       )}
 
       <form className="newpost-form" onSubmit={handlePost}>
-        <input
-          className="newpost-input"
-          type="text"
-          placeholder="제목을 입력하세요(최대 50자)"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          maxLength={50}
-        />
+        {/* ⬇⬇⬇ 제목 + 툴바: sticky 영역 */}
+        <div className="newpost-sticky-header">
+          <input
+            className="newpost-input"
+            type="text"
+            placeholder="제목을 입력하세요(최대 50자)"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            maxLength={50}
+          />
 
-        <div id="editor-toolbar" className="ql-custom-toolbar">
-          <span className="ql-formats">
-            <select className="ql-font" defaultValue="">
-              <option value=""></option>
-              <option value="arial">Arial</option>
-              <option value="georgia">Georgia</option>
-              <option value="tahoma">Tahoma</option>
-              <option value="courier">Courier New</option>
-            </select>
-            <select className="ql-size" defaultValue="">
-              <option value="10px">10px</option>
-              <option value="12px">12px</option>
-              <option value="14px">14px</option>
-              <option value="16px">16px</option>
-              <option value="18px">18px</option>
-              <option value="20px">20px</option>
-              <option value="22px">22px</option>
-              <option value="24px">24px</option>
-              <option value="26px">26px</option>
-              <option value="28px">28px</option>
-              <option value="30px">30px</option>
-            </select>
-          </span>
+          <div id="editor-toolbar" className="ql-custom-toolbar">
+            <span className="ql-formats">
+              <select className="ql-font" defaultValue="">
+                <option value=""></option>
+                <option value="arial">Arial</option>
+                <option value="georgia">Georgia</option>
+                <option value="tahoma">Tahoma</option>
+                <option value="courier">Courier New</option>
+              </select>
+              <select className="ql-size" defaultValue="">
+                <option value="10px">10px</option>
+                <option value="12px">12px</option>
+                <option value="14px">14px</option>
+                <option value="16px">16px</option>
+                <option value="18px">18px</option>
+                <option value="20px">20px</option>
+                <option value="22px">22px</option>
+                <option value="24px">24px</option>
+                <option value="26px">26px</option>
+                <option value="28px">28px</option>
+                <option value="30px">30px</option>
+              </select>
+            </span>
 
-          <span className="ql-formats">
-            <button className="ql-bold" />
-            <button className="ql-italic" />
-            <button className="ql-underline" />
-            <button className="ql-strike" />
-          </span>
+            <span className="ql-formats">
+              <button className="ql-bold" />
+              <button className="ql-italic" />
+              <button className="ql-underline" />
+              <button className="ql-strike" />
+            </span>
 
-          <span className="ql-formats">
-            <select className="ql-color" />
-            <select className="ql-background" />
-          </span>
+            <span className="ql-formats">
+              <select className="ql-color" />
+              <select className="ql-background" />
+            </span>
 
-          <span className="ql-formats">
-            <button className="ql-list" value="ordered" />
-            <button className="ql-list" value="bullet" />
-            <select className="ql-align" />
-          </span>
+            <span className="ql-formats">
+              <button className="ql-list" value="ordered" />
+              <button className="ql-list" value="bullet" />
+              <select className="ql-align" />
+            </span>
 
-          <span className="ql-formats">
-            <button className="ql-link" />
-            <button className="ql-image" />
-            <button className="ql-code-block" />
-            <button className="ql-clean" />
-          </span>
+            <span className="ql-formats">
+              <button className="ql-link" />
+              <button className="ql-image" />
+              <button className="ql-code-block" />
+              <button className="ql-clean" />
+            </span>
+          </div>
         </div>
+        {/* ⬆⬆⬆ sticky 끝 */}
 
         <ReactQuill
           value={content}

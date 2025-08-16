@@ -82,6 +82,8 @@ export default function Register() {
           아이디(필수)
           <input name="username" value={form.username} onChange={onChange} autoComplete="username" />
           {fieldError("username")}
+          <p>    게시물 작성시 해당 아이디가 표시 됩니다.(한글 가능)
+          </p>
         </label>
 
         <label>
