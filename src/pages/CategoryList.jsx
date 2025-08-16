@@ -1,20 +1,18 @@
 // src/pages/CategoryList.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { api } from "../utils/axios";
 import { CATEGORIES, CATEGORY_SLUGS } from "../constants/categories";
 import "./CategoryList.css";
 
-
-
-// ... 상단 import/상수 동일
 const PAGE_SIZE = 15;
 
 export default function CategoryList({ slug }) {
+  // URL 파라미터/prop에서 카테고리 결정
   const { category: paramCategory } = useParams();
   const category = slug ?? paramCategory;
-
   const valid = CATEGORY_SLUGS.includes(category);
+
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1);
 
@@ -22,12 +20,15 @@ export default function CategoryList({ slug }) {
   const [q, setQ] = useState("");
   const [mode, setMode] = useState("all"); // all | title | content | author
 
+  // 데이터 로드
   useEffect(() => {
     if (!valid) return;
     api
       .get("/posts/", { params: { category } })
       .then((res) => setPosts(Array.isArray(res.data) ? res.data : []))
       .catch(console.error);
+
+    // 카테고리 바뀌면 초기화
     setPage(1);
     setQ("");
     setMode("all");
@@ -37,6 +38,98 @@ export default function CategoryList({ slug }) {
   useEffect(() => {
     setPage(1);
   }, [q, mode]);
+
+  const norm = (v) => String(v ?? "").toLowerCase();
+  const query = norm(q);
+
+  // 검색 필터
+  const filtered = useMemo(() => {
+    if (!query) return posts;
+    return posts.filter((p) => {
+      const title = norm(p.title);
+      const content = norm(p.content);
+      const author =
+        norm(p.author_display ?? p.author ?? p.username ?? p.user ?? p.writer ?? "");
+
+      switch (mode) {
+        case "title":
+          return title.includes(query);
+        case "content":
+          return content.includes(query);
+        case "author":
+          return author.includes(query);
+        case "all":
+        default:
+          return title.includes(query) || content.includes(query) || author.includes(query);
+      }
+    });
+  }, [posts, query, mode]);
+
+  // 고정글/일반글 분리 (서버가 -is_pinned, -created_at으로 내려줘도 한 번 더 확실히)
+  const pinned = useMemo(() => filtered.filter((p) => !!p.is_pinned), [filtered]);
+  const normal = useMemo(() => filtered.filter((p) => !p.is_pinned), [filtered]);
+
+  // ✅ 페이지네이션 규칙
+  // - 1페이지: [모든 고정글] + [일반글 일부] (고정글 수만큼 페이지 한도에서 차지)
+  // - 2페이지~: 일반글만 페이지네이션
+  // - 번호는 "일반글"만 계산 (고정글은 '공지')
+  const { totalPages, pageItems, normalStartIndex } = useMemo(() => {
+    // 고정글이 페이지 사이즈보다 많다면 잘라서 보여줌(예외적 케이스)
+    const pinCap = Math.min(pinned.length, PAGE_SIZE);
+    const spaceForNormalOnFirst = Math.max(0, PAGE_SIZE - pinCap);
+
+    if (normal.length === 0) {
+      // 일반글이 하나도 없으면 페이지는 최소 1
+      return {
+        totalPages: 1,
+        pageItems: page === 1 ? pinned.slice(0, PAGE_SIZE) : [],
+        normalStartIndex: 0,
+      };
+    }
+
+    // 1페이지에 들어가는 일반글 개수
+    const firstPageNormalCount = Math.min(spaceForNormalOnFirst, normal.length);
+    const remainingNormal = Math.max(0, normal.length - firstPageNormalCount);
+
+    // 2페이지부터 필요한 페이지 수
+    const extraPages = Math.ceil(remainingNormal / PAGE_SIZE);
+    const total = 1 + (remainingNormal > 0 ? extraPages : 0);
+
+    if (page === 1) {
+      const page1Normals = normal.slice(0, firstPageNormalCount);
+      return {
+        totalPages: Math.max(1, total),
+        pageItems: [...pinned.slice(0, pinCap), ...page1Normals],
+        normalStartIndex: 0, // 일반글 번호 계산 시작 인덱스
+      };
+    }
+
+    // page >= 2 → 일반글만
+    // 2페이지의 일반글 오프셋 = 첫 페이지에 소비한 일반글 수 + (page-2)*PAGE_SIZE
+    const offset = firstPageNormalCount + (page - 2) * PAGE_SIZE;
+    const slice = normal.slice(offset, offset + PAGE_SIZE);
+
+    return {
+      totalPages: Math.max(1, total),
+      pageItems: slice,
+      normalStartIndex: offset, // 일반글 번호 계산에 쓰는 전역 인덱스 시작값
+    };
+  }, [page, pinned, normal]);
+
+  // 번호 계산: 일반글만 카운트(내림차순)
+  const totalNormal = normal.length;
+  const calcDisplayNumber = (idxInCurrentList, post) => {
+    if (post.is_pinned) return "공지";
+    const indexAmongAllNormals = normalStartIndex + idxInCurrentList; // 전체 일반글에서의 위치(0-based)
+    return totalNormal - indexAmongAllNormals; // 최신글이 큰 번호
+  };
+
+  // 날짜 포맷 (YYYY-MM-DD)
+  const fmtDate = (iso) => {
+    if (!iso) return "";
+    // iso: "2025-08-12T08:12:34.000Z" 형태 가정
+    return String(iso).slice(0, 10);
+  };
 
   if (!valid) {
     return (
@@ -49,55 +142,15 @@ export default function CategoryList({ slug }) {
     );
   }
 
-  const norm = (v) => String(v ?? "").toLowerCase();
-  const query = norm(q);
-
-  const matches = (p) => {
-    if (!query) return true;
-
-    const title   = norm(p.title);
-    const content = norm(p.content); // 시리얼라이저가 content 내려줌
-    const author  = norm(p.author ?? p.username ?? p.user ?? p.writer ?? "");
-
-    switch (mode) {
-      case "title":
-        return title.includes(query);
-      case "content":
-        return content.includes(query);
-      case "author":
-        return author.includes(query);
-      case "all":
-      default:
-        return title.includes(query) || content.includes(query) || author.includes(query);
-    }
-  };
-
-  const filtered = posts.filter(matches);
-
-  const totalCount = filtered.length;
-  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
-  const start = (page - 1) * PAGE_SIZE;
-  const pageItems = filtered.slice(start, start + PAGE_SIZE);
-  const calcDisplayNumber = (idxInPage) => totalCount - (start + idxInPage);
-
   return (
     <div className="home-container">
       {/* 상단 타이틀 + 작성 버튼 */}
-      <div
-        style={{
-          display: "flex",
-          gap: 12,
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 12,
-          flexWrap: "wrap",
-        }}
-      >
-        <h2 style={{ margin: 0 }}>{CATEGORIES[category]}</h2>
+      <div className="header-row">
+        <h2 className="page-title">{CATEGORIES[category]}</h2>
         <Link to={`/new/${category}`} className="write-btn">게시물 작성</Link>
       </div>
 
-      {/* 🔎 검색바: 입력 + 모드 선택 */}
+      {/* 🔎 검색바 */}
       <div className="search-bar">
         <input
           className="search-input"
@@ -129,27 +182,33 @@ export default function CategoryList({ slug }) {
       <table className="post-table">
         <thead>
           <tr>
-            <th>번호</th>
+            <th style={{ width: 80 }}>번호</th>
             <th>제목</th>
-            <th>작성자</th>
-            <th>날짜</th>
-            <th>조회수</th>
+            <th style={{ width: 140 }}>작성자</th>
+            <th style={{ width: 120 }}>날짜</th>
+            <th style={{ width: 80 }}>조회수</th>
           </tr>
         </thead>
         <tbody>
           {pageItems.length === 0 ? (
             <tr>
-              <td colSpan={5} style={{ textAlign: "center", color: "#777" }}>
+              <td colSpan={5} className="empty-cell">
                 {q ? "검색 결과가 없습니다." : "게시물이 없습니다."}
               </td>
             </tr>
           ) : (
             pageItems.map((post, idx) => (
-              <tr key={post.id}>
-                <td>{calcDisplayNumber(idx)}</td>
-                <td><Link to={`/posts/${post.id}`}>{post.title}</Link></td>
-                <td>{post.author}</td>
-                <td>{post.date}</td>
+              <tr key={post.id} className={post.is_pinned ? "notice-row" : ""}>
+                <td className={post.is_pinned ? "notice-cell" : ""}>
+                  {calcDisplayNumber(idx, post)}
+                </td>
+                <td>
+                  <Link to={`/posts/${post.id}`} className="post-link">
+                    {post.title}
+                  </Link>
+                </td>
+                <td>{post.author_display ?? post.author ?? ""}</td>
+                <td>{fmtDate(post.created_at)}</td>
                 <td>{post.views}</td>
               </tr>
             ))
