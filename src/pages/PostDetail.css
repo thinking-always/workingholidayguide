@@ -156,3 +156,63 @@
     }
     .post-content { min-height: 35vh; }
 }
+/* ===== PostDetail 하단 목록(임베디드) 정렬/간격 오버라이드 ===== */
+
+/* 테이블을 PostDetail 폭에 딱 맞게 */
+.post-detail-container .post-table {
+  width: 100%;
+  margin: 16px 0 0;          /* 헤더와 적당한 간격 */
+  table-layout: fixed;        /* 열폭 고정 + 말줄임 */
+  border-collapse: collapse;
+}
+
+/* 셀 패딩/행높이 통일 */
+.post-detail-container .post-table th,
+.post-detail-container .post-table td {
+  padding: 10px 12px;
+  line-height: 1.45;
+  vertical-align: middle;
+}
+
+/* 열폭: 공지/작성자/날짜/조회수 고정, 제목 유동 */
+.post-detail-container .post-table thead th:nth-child(1) { width: 68px;  text-align: center; }
+.post-detail-container .post-table thead th:nth-child(3) { width: 140px; }
+.post-detail-container .post-table thead th:nth-child(4) { width: 112px; }
+.post-detail-container .post-table thead th:nth-child(5) { width: 84px;  text-align: right; }
+
+.post-detail-container .post-table td:nth-child(1) { text-align: center; }
+.post-detail-container .post-table td:nth-child(5) { text-align: right; }
+
+/* 제목은 한 줄 말줄임으로 정돈 */
+.post-detail-container .post-table td:nth-child(2) a {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 공지 행은 연한 파랑 배경(카테고리 리스트와 톤 맞춤) */
+.post-detail-container .post-table tr.notice-row {
+  background: #eef5ff;
+}
+
+/* 페이지네이션도 컨테이너에 맞춰 촘촘하게 */
+.post-detail-container .category-tabs {
+  margin: 14px 0 0;
+  justify-content: center;
+  gap: 6px;
+}
+.post-detail-container .category-tabs button {
+  min-width: 34px;
+  height: 32px;
+  padding: 0 10px;
+}
+
+/* 모바일에서 열폭 살짝 조정 */
+@media (max-width: 640px) {
+  .post-detail-container .post-table thead th:nth-child(3) { width: 110px; }
+  .post-detail-container .post-table thead th:nth-child(4) { width: 96px; }
+  .post-detail-container .post-table thead th:nth-child(5) { width: 70px; }
+  .post-detail-container .post-table th,
+  .post-detail-container .post-table td { padding: 9px 10px; }
+}
