@@ -179,3 +179,17 @@
   .post-table.post-table--compact th,
   .post-table.post-table--compact td { padding: 0.42rem 0.5rem; }
 }
+
+.sidebar {
+  flex: 1;
+  min-width: 260px;        /* 광고 최소 폭 */
+  max-width: 320px;        /* 사이드바 폭 제한(선택) */
+  position: sticky;        /* 스크롤 고정 효과(선택) */
+  top: 20px;
+}
+
+.sidebar-title {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  color: #555;
+}

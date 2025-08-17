@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../utils/axios";
 import { CATEGORIES } from "../constants/categories";
+import AdComponent from "../components/AdComponent";
 import "./Home.css";
 
 const SECTION_SLUGS = ["basic", "jobs_housing", "guide", "travel"];
@@ -42,7 +43,7 @@ export default function Home() {
           const slug = SECTION_SLUGS[i];
           const arr = Array.isArray(res.data) ? res.data : [];
           nextCounts[slug] = arr.length; // 전체 개수
-          nextData[slug] = arr; // 전체 데이터 (검색에 필요)
+          nextData[slug] = arr;          // 전체 데이터 (검색에 필요)
         });
         setCounts(nextCounts);
         setData(nextData);
@@ -76,54 +77,68 @@ export default function Home() {
   };
 
   return (
-    <div className="home-container">
-      <div className="home-header-row" style={{ justifyContent: "space-between", alignItems: "center" }}>
-        <h2 className="home-title">최신 글 한눈에 보기</h2>
+    <div className="home-layout">
+      {/* 메인 콘텐츠 */}
+      <div className="home-container">
+        <div className="home-header-row" style={{ justifyContent: "space-between", alignItems: "center" }}>
+          <h2 className="home-title">최신 글 한눈에 보기</h2>
 
-        {/* 🔎 검색바 */}
-        <div className="search-bar">
-          <input
-            className="search-input"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder={
-              mode === "title"   ? "제목 검색" :
-              mode === "content" ? "내용 검색" :
-              mode === "author"  ? "작성자 검색" :
-              "제목·내용·작성자 통합 검색"
-            }
-          />
-          <select
-            className="search-select"
-            value={mode}
-            onChange={(e) => setMode(e.target.value)}
-          >
-            <option value="all">전체</option>
-            <option value="title">제목</option>
-            <option value="content">내용</option>
-            <option value="author">작성자</option>
-          </select>
+          {/* 🔎 검색바 */}
+          <div className="search-bar">
+            <input
+              className="search-input"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={
+                mode === "title"   ? "제목 검색" :
+                mode === "content" ? "내용 검색" :
+                mode === "author"  ? "작성자 검색" :
+                "제목·내용·작성자 통합 검색"
+              }
+            />
+            <select
+              className="search-select"
+              value={mode}
+              onChange={(e) => setMode(e.target.value)}
+            >
+              <option value="all">전체</option>
+              <option value="title">제목</option>
+              <option value="content">내용</option>
+              <option value="author">작성자</option>
+            </select>
+          </div>
         </div>
+
+        {loading ? (
+          <div style={{ textAlign: "center", color: "#666" }}>불러오는 중…</div>
+        ) : (
+          <div className="home-sections">
+            {SECTION_SLUGS.map((slug) => {
+              const filteredPosts = data[slug].filter(matches).slice(0, VISIBLE_PER_SECTION);
+              return (
+                <SectionCard
+                  key={slug}
+                  slug={slug}
+                  title={CATEGORIES[slug]}
+                  posts={filteredPosts}
+                  total={counts[slug]}
+                />
+              );
+            })}
+          </div>
+        )}
       </div>
 
-      {loading ? (
-        <div style={{ textAlign: "center", color: "#666" }}>불러오는 중…</div>
-      ) : (
-        <div className="home-sections">
-          {SECTION_SLUGS.map((slug) => {
-            const filteredPosts = data[slug].filter(matches).slice(0, VISIBLE_PER_SECTION);
-            return (
-              <SectionCard
-                key={slug}
-                slug={slug}
-                title={CATEGORIES[slug]}
-                posts={filteredPosts}
-                total={counts[slug]}
-              />
-            );
-          })}
+      {/* 👉 사이드바 */}
+      <aside className="sidebar">
+        <h3 className="sidebar-title">스폰서</h3>
+        {/* 광고 1 */}
+        <AdComponent slot="XXXXXXXXXX" />
+        {/* 광고 2 (옵션) */}
+        <div style={{ marginTop: 20 }}>
+          <AdComponent slot="YYYYYYYYYY" />
         </div>
-      )}
+      </aside>
     </div>
   );
 }
