@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico" /> -->
      <link rel="icon" href="%PUBLIC_URL%/bag.png" />
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -43,5 +45,40 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+      <script>
+(function() {
+  try {
+    // /social-complete 로 들어오면 React가 뜨기 전에 토큰을 저장하고 URL을 정리한다.
+    if (location.pathname === '/social-complete') {
+      var access=null, refresh=null;
+
+      // 1) 해시 우선
+      if (location.hash) {
+        var h = new URLSearchParams(location.hash.slice(1));
+        access = h.get('access'); refresh = h.get('refresh');
+      }
+
+      // 2) 쿼리스트링 폴백
+      if ((!access || !refresh) && location.search) {
+        var s = new URLSearchParams(location.search.slice(1));
+        access = access || s.get('access');
+        refresh = refresh || s.get('refresh');
+      }
+
+      if (access && refresh) {
+        localStorage.setItem('access', access);
+        localStorage.setItem('refresh', refresh);
+        // 민감정보 제거 + 홈으로 이동
+        location.replace('/');
+      } else {
+        // 못 읽으면 로그인으로 돌려보냄(필요시 메시지 페이지로 변경 가능)
+        location.replace('/login');
+      }
+    }
+  } catch (e) {
+    console.error('bootstrap social-complete failed', e);
+  }
+})();
+</script>
   </body>
 </html>

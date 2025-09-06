@@ -1,0 +1,136 @@
+/* src/pages/settings.css */
+
+/* ===== Theme ===== */
+:root {
+  --auth-max-width: 480px;
+  --auth-radius: 12px;
+  --auth-shadow: 0 8px 24px rgba(0,0,0,.06);
+  --auth-border: #e6e8ef;
+  --auth-text: #222;
+  --auth-muted: #667085;
+  --auth-primary: #0d6efd;
+  --auth-primary-hover: #0b5ed7;
+  --auth-focus: 0 0 0 3px rgba(13,110,253,.18);
+  --auth-error-bg: #fff0f0;
+  --auth-error-border: #ffcfcf;
+  --auth-error-text: #b00020;
+
+  --auth-bg: #f7f8fb;
+  --auth-card: #fff;
+  --auth-success: #2ea44f;
+}
+
+.register-container, .register-container * { box-sizing: border-box; }
+
+/* 페이지 배경 */
+.page-bg { background: var(--auth-bg); min-height: 100dvh; }
+
+/* 카드 컨테이너 */
+.register-container {
+  max-width: var(--auth-max-width);
+  margin: 16px auto 64px;
+  padding: 24px;
+  background: var(--auth-card);
+  border: 1px solid var(--auth-border);
+  border-radius: var(--auth-radius);
+  box-shadow: var(--auth-shadow);
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--auth-text);
+}
+
+/* 카드 내부 헤더: 왼쪽 제목, 오른쪽 유저네임 */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+
+/* 유저네임 pill (가독성 강화) */
+.nickname-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--auth-border);
+  border-radius: 999px;
+  background: #f1f3f9;
+  color: var(--auth-text);
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+  max-width: 60%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nickname-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--auth-primary); }
+
+/* 폼 */
+.register-form { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+.register-form label { display: block; font-size: 14px; color: var(--auth-muted); }
+
+.register-form input[type="text"],
+.register-form input[type="password"],
+.register-form input[type="email"] {
+  display: block; width: 100%; margin-top: 6px; padding: 12px 14px;
+  border: 1px solid #ced4da; border-radius: 10px; font-size: 15px; outline: none;
+  transition: border-color .15s ease, box-shadow .15s ease; background: #fff; color: var(--auth-text);
+}
+.register-form input:focus { border-color: var(--auth-primary); box-shadow: var(--auth-focus); }
+
+.field-error {
+  margin-top: 6px; color: var(--auth-error-text); background: var(--auth-error-bg);
+  border: 1px solid var(--auth-error-border); padding: 8px 10px; border-radius: 8px; font-size: 13px;
+}
+
+/* 안내/상태 메시지 */
+.login-info { font-size: 13px; color: var(--auth-muted); }
+.info-success { color: var(--auth-success); font-weight: 600; }
+.info-error { color: var(--auth-error-text); font-weight: 600; }
+
+/* 중복 확인 줄 정렬 */
+.check-row { display: flex; gap: 8px; align-items: center; }
+
+/* 버튼 */
+.register-submit,
+.register-form button[type="button"] {
+  width: 100%; min-height: 44px; padding: 13px 14px;
+  background: var(--auth-primary); color: #fff; border: 0; border-radius: 10px;
+  cursor: pointer; font-size: 16px; font-weight: 600;
+  transition: background .15s ease, transform .02s ease, filter .15s ease;
+}
+.register-form button[type="button"] { width: auto; padding: 10px 14px; min-height: 40px; }
+.register-submit:hover,
+.register-form button[type="button"]:hover { background: var(--auth-primary-hover); filter: brightness(1.02); }
+.register-submit:active,
+.register-form button[type="button"]:active { transform: translateY(1px); }
+.register-submit:disabled,
+.register-form button[type="button"]:disabled { opacity: .7; cursor: not-allowed; }
+
+/* 섹션 카드 */
+.consent-box { margin-top: 2px; padding: 12px 14px; background: #f8f9fb; border: 1px solid var(--auth-border); border-radius: 10px; }
+.consent-box + .consent-box { margin-top: 16px; }
+
+/* 위험 영역(탈퇴) 변형 */
+.consent-box.danger { border-color: color-mix(in oklab, #e5484d 40%, var(--auth-border)); }
+.consent-box.danger .register-submit { background: #e5484d; }
+.consent-box.danger .register-submit:hover { background: #cf3c41; }
+
+/* 반응형 */
+@media (max-width: 520px) {
+  .register-container { margin: 12px 12px 48px; padding: 18px; }
+  .card-title { font-size: 22px; }
+  .register-form { gap: 12px; }
+  .nickname-pill { max-width: 65%; }
+}
+
+/* 모션 최소화 */
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

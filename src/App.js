@@ -15,6 +15,8 @@ import ForgotUsername from "./pages/ForgotUsername";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Settings from "./pages/Settings";
+import GoogleCallback from "./components/GoogleCallback";
+import SocialComplete from "./pages/SocialComplete"; 
 
 function App() {
   return (
@@ -22,7 +24,11 @@ function App() {
       <BrowserRouter>
         <Headers />
         <Routes>
-          <Route path='/' element={<Home />} />
+
+          <Route path="/social-complete" element={<SocialComplete />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
+          + <Route path='/' element={<Home />} />
+          {/* <Route path='/' element={<Home />} /> */}
           <Route path='/login' element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/terms" element={<Terms />} />
